@@ -19,6 +19,8 @@ venv.bak/
 # Do NOT ignore the database or models as requested
 !db.sqlite3
 !crop_model.pkl
+!Crop_recommendation.csv
+
 
 # Media files
 media/
