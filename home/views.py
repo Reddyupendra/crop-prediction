@@ -56,6 +56,7 @@ def userregister(request):
             if profile_photo:
                 # Save the file to a temporary location
                 temp_file_path = os.path.join(settings.MEDIA_ROOT, 'temp', profile_photo.name)
+                os.makedirs(os.path.dirname(temp_file_path), exist_ok=True) # Ensure 'temp' directory exists
                 with open(temp_file_path, 'wb+') as destination:
                     for chunk in profile_photo.chunks():
                         destination.write(chunk)
