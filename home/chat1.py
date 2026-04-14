@@ -1,7 +1,11 @@
 import speech_recognition as sr
 from googletrans import Translator
 from gtts import gTTS
-from playsound import playsound
+try:
+    from playsound import playsound
+except ImportError:
+    playsound = None
+
 import pickle
 import pandas as pd
 import os
@@ -23,7 +27,8 @@ def speak_in_telugu(text):
         tts = gTTS(text=text, lang='te')
         filename = "response.mp3"
         tts.save(filename)
-        playsound(filename)
+        if playsound:
+            playsound(filename)
         os.remove(filename)
     except Exception as e:
         print("🔊 Error speaking:", e)
