@@ -29,8 +29,6 @@ urlpatterns = [
     path('userlogin/',views.userlogin,name='userlogin'),
 
     path('userregister/',views.userregister,name='userregister'),
-    path('verify_otp/',views.verify_otp, name='verify_otp'),
-    path('resend_otp/',views.resend_otp, name='resend_otp'),
     path('userlogincheck/',views.userlogincheck,name='userlogincheck'),
     path('userhome/<str:name>/', views.userhome, name='userhome'),
     
