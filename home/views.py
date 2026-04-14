@@ -81,15 +81,19 @@ def userregister(request):
                 <p><b>System Generated Mail - No Reply Allowed</b></p>
             """)
             # Send OTP via Email
-            send_mail(
-                subject,
-                '',
-                'tejadatapoint0510@gmail.com',
-                [email],
-                fail_silently=False,
-                html_message=message,  # Sending HTML email
-            )
-            messages.success(request, "OTP has been sent to your email. Please verify.")
+            try:
+                send_mail(
+                    subject,
+                    '',
+                    settings.EMAIL_HOST_USER, # Use the correct email from settings
+                    [email],
+                    fail_silently=False,
+                    html_message=message,  # Sending HTML email
+                )
+            except Exception as e:
+                print(f"Error sending email: {e}")
+                
+            messages.success(request, "OTP process initiated. Please verify.")
             print("Redirecting to OTP verification page.")  # Debug message
             return redirect(reverse('verify_otp'))  # Redirect to OTP verification page
         else:
@@ -191,14 +195,17 @@ def send_otp_email(name, email, otp, expiry_minutes):
         <p>Best Regards,</p>
         <p><b>System Generated Mail - No Reply Allowed</b></p>
     """)
-    send_mail(
-        subject,
-        '',
-        'tejadatapoint0510@gmail.com',  # Sender email
-        [email],
-        fail_silently=False,
-        html_message=message,
-    )
+    try:
+        send_mail(
+            subject,
+            '',
+            settings.EMAIL_HOST_USER,  # Sender email
+            [email],
+            fail_silently=False,
+            html_message=message,
+        )
+    except Exception as e:
+        print(f"Error sending email: {e}")
 
 # ----------------------------------------User Login------------------------------------
 def userlogin(request):
