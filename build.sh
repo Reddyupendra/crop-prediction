@@ -2,7 +2,8 @@
 # exit on error
 set -o errexit
 
-pip install -r requirment.txt
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 
 # Ensure media folder exists and model is in it
 mkdir -p media
