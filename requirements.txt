@@ -1,0 +1,14 @@
+Django==5.2
+djangorestframework
+gunicorn==20.1.0
+whitenoise==6.5.0
+python-dotenv
+Pillow
+pandas
+seaborn
+matplotlib
+scikit-learn
+SpeechRecognition
+googletrans==4.0.0rc1
+gTTS
+word2number
