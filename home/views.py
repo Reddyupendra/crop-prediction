@@ -42,7 +42,6 @@ def userlogin(request):
     return render(request,'userlogin.html')
 # ----------------------------------------User Registration------------------------------------
 def userregister(request):
-    print("User registration initiated.")  # Debug message
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -55,10 +54,8 @@ def userregister(request):
             return redirect('userlogin')
         else:
             messages.error(request, "OOPS! Please correct the errors below.")
-            print("Form validation failed.")  # Debug message
     else:
         form = UserProfileForm()
-        print("Displaying registration form.")  # Debug message
     return render(request, 'registration.html', {'form': form})
 
 
@@ -68,18 +65,23 @@ def userlogin(request):
 
 def userlogincheck(request):
     if request.method == 'POST':
-        email = request.POST.get('email').strip().lower()
+        email = request.POST.get('email', '').strip().lower()
         password = request.POST.get('password')
         try:
             user = userProfile.objects.get(email__iexact=email)
-            print(f"Debug: Retrieved user status: {user.status}")            
             if user.status.lower() == 'blocked':
                 messages.error(request, 'Your account is blocked. Please contact our admin team.')
                 return render(request, 'userlogin.html')           
             if user.status.lower() != 'activated':
                 messages.warning(request, 'Your account is not active. Please wait for admin approval.')
                 return render(request, 'userlogin.html')
-            password_matches = bool(password) and check_password(password, user.password)
+            password_matches = False
+            if password:
+                try:
+                    password_matches = check_password(password, user.password)
+                except (TypeError, ValueError):
+                    # Old records may contain plaintext values that are not valid Django hashes.
+                    password_matches = False
             # Upgrade old plaintext passwords on successful login for backward compatibility.
             if password and not password_matches and user.password == password:
                 user.password = make_password(password)
@@ -97,9 +99,6 @@ def userlogincheck(request):
                 request.session['profile_photo'] = user.profile_photo.url if user.profile_photo else '/media/profile_photos/default.png'
                 user.last_login = now()
                 user.save()
-                print(f"Debug: Logged-in user email: {request.session['email']}")
-                print(f"Debug: Logged-in user name: {request.session['name']}")
-                print(f"Debug: Session data: {request.session.items()}")
                 return redirect('userhome', name=user.name)
             else:
                 messages.error(request, 'Invalid password. Please try again.')
