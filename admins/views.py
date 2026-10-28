@@ -1,3 +1,6 @@
+import os
+import secrets
+
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.core.paginator import Paginator
@@ -21,7 +24,18 @@ def AdminLoginCheck(request):
         pswd = request.POST.get('pswd')
         print(f"AdminLoginCheck: Received login attempt with User ID = {usrid}")  # Debug
 
-        if usrid == 'admin' and pswd == 'admin':
+        admin_login_id = os.environ.get("ADMIN_LOGIN_ID", "")
+        admin_password = os.environ.get("ADMIN_PASSWORD", "")
+        credentials_configured = bool(admin_login_id and admin_password)
+        credentials_match = (
+            credentials_configured
+            and bool(usrid)
+            and bool(pswd)
+            and secrets.compare_digest(usrid, admin_login_id)
+            and secrets.compare_digest(pswd, admin_password)
+        )
+
+        if credentials_match:
             request.session['user_name'] = usrid
             print(f"AdminLoginCheck: Login successful for User ID = {usrid}")  # Debug
             return redirect(AdminHome)
