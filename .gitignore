@@ -1,26 +1,41 @@
-# Python
+# Python bytecode and caches
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Django
-*.log
-local_settings.py
-
-# Environments
-.env
-.venv
-env/
+# Virtual environments
+.venv/
 venv/
+env/
 ENV/
 env.bak/
 venv.bak/
 
-# Do NOT ignore the database or models as requested
-!db.sqlite3
-!crop_model.pkl
-!Crop_recommendation.csv
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.json
 
-
-# Media files
+# Django and local runtime artifacts
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
 media/
+staticfiles/
+
+# Test and tooling caches
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
