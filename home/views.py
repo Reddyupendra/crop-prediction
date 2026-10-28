@@ -1,4 +1,5 @@
 from django.shortcuts import render,redirect
+from django.contrib.auth.hashers import check_password, make_password
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import userProfile
@@ -45,7 +46,11 @@ def userregister(request):
     if request.method == 'POST':
         form = UserProfileForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            # Store a one-way password hash; never persist the confirmation field.
+            profile = form.save(commit=False)
+            profile.password = make_password(form.cleaned_data["password"])
+            profile.confirm_password = ""
+            profile.save()
             messages.success(request, "Account created successfully! Wait for admin approval.")
             return redirect('userlogin')
         else:
@@ -74,7 +79,19 @@ def userlogincheck(request):
             if user.status.lower() != 'activated':
                 messages.warning(request, 'Your account is not active. Please wait for admin approval.')
                 return render(request, 'userlogin.html')
-            if user.password == password:
+            password_matches = bool(password) and check_password(password, user.password)
+            # Upgrade old plaintext passwords on successful login for backward compatibility.
+            if password and not password_matches and user.password == password:
+                user.password = make_password(password)
+                user.confirm_password = ""
+                user.save(update_fields=["password", "confirm_password"])
+                password_matches = True
+
+            if password_matches:
+                # Remove legacy confirmation values as soon as the account logs in.
+                if user.confirm_password:
+                    user.confirm_password = ""
+                    user.save(update_fields=["confirm_password"])
                 request.session['email'] = user.email
                 request.session['name'] = user.name
                 request.session['profile_photo'] = user.profile_photo.url if user.profile_photo else '/media/profile_photos/default.png'
