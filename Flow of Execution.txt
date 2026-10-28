@@ -1,10 +1,21 @@
-1. first find the path for manage.py file i.e  \crop_predication_chatbot\CODE\crop_predication_chatbot from this location run the server.
-2. in the address bar type CMD
-3. Type python manage.py runserver
-4. on sucessfull running the server you will get the development server i.e http://127.0.0.1:8000/
-5. copy the server number and paste it in the browser
-6. project will get the open on the server
-7. Their you will be having options like HOME,USERLOGIN,ADMINLOGIN,SIGNUP
-8. First the user have to create the login credentials by clicking on signup
-9. On creating details by default status will be Waiting admin have to activate then only the login credentials will get activate admin login credential are admin , admin
-10. Now the user can login with the registred details and monitor the machine learning and deep learning themes     
+# Running the Crop Recommendation System
+
+The Django entry point is the root-level `manage.py` file.
+
+## Local setup
+
+1. Install Python 3.10 and create a virtual environment.
+2. Install packages with `python -m pip install -r requirements.txt`.
+3. Copy `.env.example` to `.env` and set a newly generated `DJANGO_SECRET_KEY`.
+4. Run `python manage.py migrate`.
+5. Run `python manage.py check`.
+6. Start the development server with `python manage.py runserver`.
+7. Open `http://127.0.0.1:8000/` in your browser.
+
+## Accounts and security
+
+- The custom admin login now reads `ADMIN_LOGIN_ID` and `ADMIN_PASSWORD` from local environment configuration. It is disabled when these values are empty; there is no default `admin/admin` credential.
+- New user passwords are hashed, and a legacy plaintext password is upgraded when that user next logs in. Review and migrate existing user data before production use.
+- Do not use Django's development server in production.
+- Before deploying, configure `DJANGO_DEBUG=False`, a strong new `DJANGO_SECRET_KEY`, exact `DJANGO_ALLOWED_HOSTS`, and any required email settings.
+- See [README.md](README.md) and [SECURITY.md](SECURITY.md) for complete setup and security notes.
